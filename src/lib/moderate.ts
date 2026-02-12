@@ -44,9 +44,11 @@ Message to evaluate: "${text.replace(/"/g, '\\"')}"
 Respond with ONLY the JSON object, nothing else.`;
 
     const result = await model.generateContent(prompt);
-    const response = result.response.text().trim();
+    let response = result.response.text().trim();
     
-    // Parse the JSON response
+    // Strip markdown code fences if Gemini wraps the response
+    response = response.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+    
     const parsed = JSON.parse(response);
     return {
       safe: parsed.safe === true,
