@@ -1,4 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
+import { neon } from '@neondatabase/serverless';
+
+const DATABASE_URL = process.env.DATABASE_URL || '';
+
+function getSQL() {
+  return neon(DATABASE_URL);
+}
 
 export interface ChatMessage {
   id: string;
@@ -12,46 +18,61 @@ export interface ChatMessage {
   };
 }
 
-// In-memory store for MVP — swap for Vercel Postgres / Supabase later
-const messages: ChatMessage[] = [
-  {
-    id: uuidv4(),
-    username: 'BraveSoul_42',
-    text: "Day 3 and feeling the itch, but I'm holding on!",
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    shadowBanned: false,
-    reactions: { heart: 5, stayStrong: 3 },
-  },
-  {
-    id: uuidv4(),
-    username: 'Fighter_12',
-    text: "You got this! The first week is the hardest.",
-    timestamp: new Date(Date.now() - 1800000).toISOString(),
-    shadowBanned: false,
-    reactions: { heart: 2, stayStrong: 8 },
-  },
-];
-
-export function getMessages(requestingUser?: string): ChatMessage[] {
-  return messages.filter(m => !m.shadowBanned || m.username === requestingUser);
-}
-
-export function addMessage(username: string, text: string, shadowBanned: boolean = false): ChatMessage {
-  const msg: ChatMessage = {
-    id: uuidv4(),
-    username,
-    text,
-    timestamp: new Date().toISOString(),
-    shadowBanned,
-    reactions: { heart: 0, stayStrong: 0 },
+function rowToMessage(row: Record<string, unknown>): ChatMessage {
+  return {
+    id: row.id as string,
+    username: row.username as string,
+    text: row.text as string,
+    timestamp: (row.created_at as Date).toISOString(),
+    shadowBanned: row.shadow_banned as boolean,
+    reactions: {
+      heart: row.hearts as number,
+      stayStrong: row.stay_strong as number,
+    },
   };
-  messages.push(msg);
-  return msg;
 }
 
-export function reactToMessage(messageId: string, reactionType: 'heart' | 'stayStrong'): ChatMessage | null {
-  const msg = messages.find(m => m.id === messageId);
-  if (!msg) return null;
-  msg.reactions[reactionType]++;
-  return msg;
+export async function getMessages(requestingUser?: string): Promise<ChatMessage[]> {
+  const sql = getSQL();
+  let rows;
+  if (requestingUser) {
+    rows = await sql`
+      SELECT * FROM messages 
+      WHERE shadow_banned = false OR username = ${requestingUser}
+      ORDER BY created_at ASC
+      LIMIT 200
+    `;
+  } else {
+    rows = await sql`
+      SELECT * FROM messages 
+      WHERE shadow_banned = false
+      ORDER BY created_at ASC
+      LIMIT 200
+    `;
+  }
+  return rows.map(rowToMessage);
+}
+
+export async function addMessage(username: string, text: string, shadowBanned: boolean = false): Promise<ChatMessage> {
+  const sql = getSQL();
+  const rows = await sql`
+    INSERT INTO messages (username, text, shadow_banned)
+    VALUES (${username}, ${text}, ${shadowBanned})
+    RETURNING *
+  `;
+  return rowToMessage(rows[0]);
+}
+
+export async function reactToMessage(messageId: string, reactionType: 'heart' | 'stayStrong'): Promise<ChatMessage | null> {
+  const sql = getSQL();
+  const column = reactionType === 'heart' ? 'hearts' : 'stay_strong';
+  // Use raw SQL for dynamic column update
+  const rows = await sql`
+    UPDATE messages 
+    SET ${reactionType === 'heart' ? sql`hearts = hearts + 1` : sql`stay_strong = stay_strong + 1`}
+    WHERE id = ${messageId}::uuid
+    RETURNING *
+  `;
+  if (rows.length === 0) return null;
+  return rowToMessage(rows[0]);
 }

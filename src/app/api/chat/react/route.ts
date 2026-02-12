@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const message = reactToMessage(messageId, reactionType);
+    const message = await reactToMessage(messageId, reactionType);
     
     if (!message) {
       return NextResponse.json({ error: 'Message not found' }, { status: 404 });
