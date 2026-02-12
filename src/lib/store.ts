@@ -36,18 +36,21 @@ export async function getMessages(requestingUser?: string): Promise<ChatMessage[
   const sql = getSQL();
   let rows;
   if (requestingUser) {
+    // Only fetch last 100 messages from the past 7 days
     rows = await sql`
       SELECT * FROM messages 
-      WHERE shadow_banned = false OR username = ${requestingUser}
+      WHERE (shadow_banned = false OR username = ${requestingUser})
+        AND created_at > NOW() - INTERVAL '7 days'
       ORDER BY created_at ASC
-      LIMIT 200
+      LIMIT 100
     `;
   } else {
     rows = await sql`
       SELECT * FROM messages 
       WHERE shadow_banned = false
+        AND created_at > NOW() - INTERVAL '7 days'
       ORDER BY created_at ASC
-      LIMIT 200
+      LIMIT 100
     `;
   }
   return rows.map(rowToMessage);
