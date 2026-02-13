@@ -5,12 +5,12 @@ const SEED_SECRET = process.env.SEED_SECRET || '';
 
 // Realistic quit-vaping struggles from "community members"
 const PERSONAS = [
-  { username: 'jake_2026', style: 'casual bro' },
-  { username: 'breathefree', style: 'earnest and hopeful' },
-  { username: 'quittr', style: 'sarcastic but trying' },
-  { username: 'day1again', style: 'raw and honest' },
-  { username: 'clearlung', style: 'motivational' },
-  { username: 'nosmoke_nova', style: 'anxious but determined' },
+  { username: 'CalmWarrior22', style: 'casual bro' },
+  { username: 'BraveSoul88', style: 'earnest and hopeful' },
+  { username: 'StrongMind14', style: 'sarcastic but trying' },
+  { username: 'FearlessHeart7', style: 'raw and honest' },
+  { username: 'MightySpirit41', style: 'motivational' },
+  { username: 'ResilientFighter63', style: 'anxious but determined' },
 ];
 
 const MESSAGES = [
