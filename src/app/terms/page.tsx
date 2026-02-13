@@ -33,7 +33,7 @@ export default function Terms() {
       <p>We may update these terms at any time. Continued use of NIX constitutes acceptance of updated terms.</p>
 
       <h2 style={{ color: '#fff' }}>Contact</h2>
-      <p>Questions? Email <a href="mailto:ferric@gmail.com" style={{ color: '#CCFF00' }}>ferric@gmail.com</a></p>
+      <p>Questions? Email <a href="mailto:nix@ferric.net" style={{ color: '#CCFF00' }}>nix@ferric.net</a></p>
     </main>
   );
 }

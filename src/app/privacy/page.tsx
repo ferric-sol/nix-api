@@ -26,10 +26,10 @@ export default function Privacy() {
       <p>Community messages are stored on servers in the United States (Vercel + Neon). Streak and personal progress data never leaves your device.</p>
 
       <h2 style={{ color: '#fff' }}>Your Rights</h2>
-      <p>You can stop using NIX at any time. Community messages expire after 7 days. To request deletion of your messages sooner, contact us at ferric@gmail.com.</p>
+      <p>You can stop using NIX at any time. Community messages expire after 7 days. To request deletion of your messages sooner, contact us at nix@ferric.net.</p>
 
       <h2 style={{ color: '#fff' }}>Contact</h2>
-      <p>Questions? Email <a href="mailto:ferric@gmail.com" style={{ color: '#CCFF00' }}>ferric@gmail.com</a></p>
+      <p>Questions? Email <a href="mailto:nix@ferric.net" style={{ color: '#CCFF00' }}>nix@ferric.net</a></p>
     </main>
   );
 }
