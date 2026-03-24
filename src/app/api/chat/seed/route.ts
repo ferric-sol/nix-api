@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
 async function generateContextualMessage(): Promise<{ username: string; text: string } | null> {
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
   // Get recent messages for context
   const recentMessages = await getMessages();

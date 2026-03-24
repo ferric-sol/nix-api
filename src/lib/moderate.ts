@@ -16,7 +16,7 @@ export async function moderateMessage(text: string): Promise<ModerationResult> {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
     const prompt = `You are a content moderator for a quit-vaping support community app. 
 Users are anonymous and trying to quit vaping/nicotine. The community should be supportive and safe.
